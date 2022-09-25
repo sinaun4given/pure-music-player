@@ -15,6 +15,7 @@ const musicProgressBar = document.querySelector(".music-progress-bar")
 const prevbutton = document.querySelector(".prev")
 const nextbutton = document.querySelector(".next")
 const playButton = document.querySelector("#sina")
+let playb=true;
 //let indexCurrentOfMusic = 0;
 
 
@@ -119,7 +120,15 @@ function setCurrentMusic (){
       audioPlay()
     
     }
-    
+     function handleNext() {
+      if   (indexOfMUsic=== musics.length-1) {
+        indexOfMUsic=0
+      }
+      else{
+        indexOfMUsic+=1}
+      updateCurrentMusic(musics[indexOfMUsic])
+      
+     }
 
 
     let indexOfMUsic=0;
@@ -127,14 +136,7 @@ function setCurrentMusic (){
     indexOfMUsic = musics.findIndex(((item)=> item.id=== currentMusic.id))
     
 
-    nextbutton.addEventListener("click",(e)=> {
-      if   (indexOfMUsic=== musics.length-1) {
-        indexOfMUsic=0
-      }
-      else{
-        indexOfMUsic+=1}
-      updateCurrentMusic(musics[indexOfMUsic])
-      })
+    nextbutton.addEventListener("click",handleNext)
 
     prevbutton.addEventListener("click",(e)=> {
       if   (indexOfMUsic===0 ) {
@@ -188,19 +190,21 @@ function setCurrentMusic (){
  
 
       })  
-
+        audio.onended=function () {handleNext()}
      
         function audioPlay(){ audio.play().then(()=>{
-          setInterval(()=>{currentTime.innerHTML=`${Math.round(audio.currentTime / 60)  } : ${Math.round(audio.currentTime % 60)}` 
+          setInterval(()=>{
+          currentTime.innerHTML=`${Math.round(audio.currentTime / 60)  } : ${Math.round(audio.currentTime % 60)}` 
           const musicProgressbarwidth =(audio.currentTime / audio.duration  ) * 100
           musicProgressBar.style.width = musicProgressbarwidth + "%" },1000)
-          let playb=true;
             fullTime.innerHTML=`${Math.round(audio.duration / 60)  } : ${Math.round(audio.duration % 60)}`
             musicTimeRange.max=audio.duration
+           
+           
             coverPlayButton.innerText="PAUSE"
             playButton.innerHTML=`<i class="material-icons" style="font-size:36px">pause</i>`
             
-    playb=false
+            playb=false
             
             coverPlayButton.onclick=()=>{
               if(coverPlayButton.style.display==="inline"){audio.pause()
