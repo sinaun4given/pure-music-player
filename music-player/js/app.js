@@ -8,8 +8,24 @@ const audio = document.querySelector("#audio")
 const playIcon = document.querySelector("#play-icon")
 const coverPlayButton =document.querySelector(".cover-play-button")
 coverPlayButton.style.display="inline"
+const currentTime = document.querySelector(".current-time")
+const fullTime = document.querySelector(".full-time")
+const musicTimeRange =document.querySelector("#music-time-range")
+const musicProgressBar = document.querySelector(".music-progress-bar")
+const prevbutton = document.querySelector(".prev")
+const nextbutton = document.querySelector(".next")
+const playButton = document.querySelector("#sina")
+//let indexCurrentOfMusic = 0;
 
 
+
+musicTimeRange.addEventListener("change",(e) => {
+  audio.currentTime=e.target.value
+  const musicProgressbarwidth =(audio.currentTime / audio.duration  ) * 100
+  console.log(musicProgressbarwidth)
+musicProgressBar.style.width = musicProgressbarwidth + "%"
+  
+})
 
 
 
@@ -83,44 +99,159 @@ function setCurrentMusic (){
   
 [...list.children].forEach(element => {
   element.addEventListener("click",()=> {
-    const currentMusic =musics.filter((item)=>
-    item.id === Number(element.dataset.id))[0]
-    // console.log(currentMusic);
+    //indexCurrentOfMusic=music.findIndex((item) =>item.id === Number(element.dataset.id))
 
-    currentMusicCover.style.backgroundImage=`url(${currentMusic.cover})`
-    currentMusicSinger.innerHTML=currentMusic.artist
-    currentMusicTitle.innerHTML=currentMusic.name
-    audio.src=currentMusic.audio
-    audio.play().then(()=>{
+
+    let currentMusic =musics.filter((item)=>
+    item.id === Number(element.dataset.id))[0]
+   
+    updateCurrentMusic(currentMusic)
+
+ 
+
+
+    function updateCurrentMusic(currentMusic){
+      currentMusicCover.style.backgroundImage=`url(${currentMusic.cover})`
+        currentMusicSinger.innerHTML=currentMusic.artist
+        currentMusicTitle.innerHTML=currentMusic.name
+        audio.src=currentMusic.audio
+        
+      audioPlay()
+    
+    }
+    
+
+
+    let indexOfMUsic=0;
+    let playb=true
+    indexOfMUsic = musics.findIndex(((item)=> item.id=== currentMusic.id))
+    
+
+    nextbutton.addEventListener("click",(e)=> {
+      if   (indexOfMUsic=== musics.length-1) {
+        indexOfMUsic=0
+      }
+      else{
+        indexOfMUsic+=1}
+      updateCurrentMusic(musics[indexOfMUsic])
+      })
+
+    prevbutton.addEventListener("click",(e)=> {
+      if   (indexOfMUsic===0 ) {
+        indexOfMUsic=musics.length-1
+      }
+      else{
+        indexOfMUsic-=1}
+      updateCurrentMusic(musics[indexOfMUsic])
+      })
       
-      coverPlayButton.innerText="PAUSE"
-      coverPlayButton.onclick=()=>{
-        if(coverPlayButton.style.display==="inline"){audio.pause()
-          coverPlayButton.style.display="inline-block"
+      
+     playButton.addEventListener("click",(e)=>{
+      if(playb){
+        playButton.innerHTML=`<svg
+        width="34"
+        height="39"
+        viewBox="0 0 34 39"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        >
+        <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M0.0585965 3.75484C0.0585965 1.42731 3.16006 0.0776807 5.38466 0.9872C7.93308 2.65922 29.6043 14.8642 31.5644 16.4936C33.5245 18.123 34.0866 20.71 31.4312 22.6341C28.776 24.558 7.67168 36.9793 5.38466 38.058C3.09716 39.1365 0.153909 37.6692 0.0585965 34.9394C-0.036716 32.2097 0.0585965 6.08213 0.0585965 3.75484ZM3.26038 5.77546C3.26038 6.36974 3.24227 32.666 3.20891 33.2069C3.15411 34.094 3.92376 34.9854 4.99602 34.4567C6.06829 33.9277 28.2337 20.7069 29.1139 20.3645C29.9943 20.0218 29.936 19.1492 29.1139 18.604C28.2921 18.0589 5.72254 5.14592 5.0625 4.57881C4.40246 4.01147 3.26038 4.86308 3.26038 5.7757V5.77546Z"
+          fill="#4F4F4F"
+          />
+          </svg>`
+          audio.pause()
           coverPlayButton.innerHTML=`<svg
           width="27"
           height="27"
           viewBox="0 0 27 27"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-        >
+          >
           <path
-            d="M24.9622 15.6979L4.68019 26.607C2.95894 27.5319 0.75 26.412 0.75 24.5475V2.7293C0.75 0.867773 2.95575 -0.255052 4.68019 0.672755L24.9622 11.5819C25.3538 11.7891 25.6793 12.0886 25.9056 12.45C26.132 12.8115 26.2513 13.222 26.2513 13.6399C26.2513 14.0578 26.132 14.4683 25.9056 14.8298C25.6793 15.1912 25.3538 15.4907 24.9622 15.6979Z"
-            fill="#F2F2F2"
+          d="M24.9622 15.6979L4.68019 26.607C2.95894 27.5319 0.75 26.412 0.75 24.5475V2.7293C0.75 0.867773 2.95575 -0.255052 4.68019 0.672755L24.9622 11.5819C25.3538 11.7891 25.6793 12.0886 25.9056 12.45C26.132 12.8115 26.2513 13.222 26.2513 13.6399C26.2513 14.0578 26.132 14.4683 25.9056 14.8298C25.6793 15.1912 25.3538 15.4907 24.9622 15.6979Z"
+          fill="#F2F2F2"
           />
-        </svg>`
-        }
-        else {
-          audio.play();
-          coverPlayButton.style.display="inline"
-          coverPlayButton.innerText="PAUSE"
+          </svg>`
+          
+          playb=false
+      }
+  else{ coverPlayButton.innerText="PAUSE"
+   playButton.innerHTML=`<i class="material-icons" style="font-size:36px">pause</i> `
+  playb=true
+  audio.play()
 
-        }
-      }      
-    })
-   
-  })
-});
-}
- setCurrentMusic ()
+  }
+    
+ 
+
+      })  
+
+     
+        function audioPlay(){ audio.play().then(()=>{
+          setInterval(()=>{currentTime.innerHTML=`${Math.round(audio.currentTime / 60)  } : ${Math.round(audio.currentTime % 60)}` 
+          const musicProgressbarwidth =(audio.currentTime / audio.duration  ) * 100
+          musicProgressBar.style.width = musicProgressbarwidth + "%" },1000)
+          let playb=true;
+            fullTime.innerHTML=`${Math.round(audio.duration / 60)  } : ${Math.round(audio.duration % 60)}`
+            musicTimeRange.max=audio.duration
+            coverPlayButton.innerText="PAUSE"
+            playButton.innerHTML=`<i class="material-icons" style="font-size:36px">pause</i>`
+            
+    playb=false
+            
+            coverPlayButton.onclick=()=>{
+              if(coverPlayButton.style.display==="inline"){audio.pause()
+                coverPlayButton.style.display="inline-block"
+             
+              playButton.innerHTML=`<svg
+              width="34"
+              height="39"
+              viewBox="0 0 34 39"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              >
+              <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M0.0585965 3.75484C0.0585965 1.42731 3.16006 0.0776807 5.38466 0.9872C7.93308 2.65922 29.6043 14.8642 31.5644 16.4936C33.5245 18.123 34.0866 20.71 31.4312 22.6341C28.776 24.558 7.67168 36.9793 5.38466 38.058C3.09716 39.1365 0.153909 37.6692 0.0585965 34.9394C-0.036716 32.2097 0.0585965 6.08213 0.0585965 3.75484ZM3.26038 5.77546C3.26038 6.36974 3.24227 32.666 3.20891 33.2069C3.15411 34.094 3.92376 34.9854 4.99602 34.4567C6.06829 33.9277 28.2337 20.7069 29.1139 20.3645C29.9943 20.0218 29.936 19.1492 29.1139 18.604C28.2921 18.0589 5.72254 5.14592 5.0625 4.57881C4.40246 4.01147 3.26038 4.86308 3.26038 5.7757V5.77546Z"
+                fill="#4F4F4F"
+                />
+                </svg>`
+            playb=false
+                coverPlayButton.innerHTML=`<svg
+                width="27"
+                height="27"
+                viewBox="0 0 27 27"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M24.9622 15.6979L4.68019 26.607C2.95894 27.5319 0.75 26.412 0.75 24.5475V2.7293C0.75 0.867773 2.95575 -0.255052 4.68019 0.672755L24.9622 11.5819C25.3538 11.7891 25.6793 12.0886 25.9056 12.45C26.132 12.8115 26.2513 13.222 26.2513 13.6399C26.2513 14.0578 26.132 14.4683 25.9056 14.8298C25.6793 15.1912 25.3538 15.4907 24.9622 15.6979Z"
+                  fill="#F2F2F2"
+                />
+              </svg>`
+              }
+              else {
+                audio.play();
+                coverPlayButton.style.display="inline"
+                coverPlayButton.innerText="PAUSE"
+                playButton.innerHTML=`<i class="material-icons" style="font-size:36px">pause</i>`
+                playb=true
+      
+              }
+            }      
+          })}
+        
+           audioPlay()
+          
+          
+        })
+      });
+    }
+    
+    
+    setCurrentMusic ()
 
